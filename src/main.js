@@ -128,17 +128,54 @@ const helperText = hud
   .attr("font-family", "sans-serif")
   .text("Arraste a flor até encostar na abelha. Arraste o cenário para pan.");
 
-const winMessage = hud
-  .append("text")
-  .attr("x", viewportWidth / 2)
-  .attr("y", viewportHeight / 2)
-  .attr("text-anchor", "middle")
-  .attr("fill", "#0f8d2d")
-  .attr("font-size", 58)
-  .attr("font-weight", "700")
-  .attr("font-family", "sans-serif")
-  .style("opacity", 0)
-  .text("Você ganhou o jogo!");
+const overlay = d3
+  .select("body")
+  .append("div")
+  .style("position", "fixed")
+  .style("inset", "0")
+  .style("display", "flex")
+  .style("align-items", "center")
+  .style("justify-content", "center")
+  .style("background", "rgba(10, 25, 10, 0.55)")
+  .style("opacity", "0")
+  .style("pointer-events", "none");
+
+const overlayCard = overlay
+  .append("div")
+  .style("background", "#ffffff")
+  .style("border-radius", "14px")
+  .style("padding", "28px 34px")
+  .style("box-shadow", "0 20px 45px rgba(0,0,0,0.25)")
+  .style("text-align", "center")
+  .style("font-family", "sans-serif")
+  .style("min-width", "280px");
+
+overlayCard
+  .append("h2")
+  .style("margin", "0 0 8px 0")
+  .style("font-size", "34px")
+  .style("color", "#15803d")
+  .text("Sucesso!");
+
+overlayCard
+  .append("p")
+  .style("margin", "0 0 20px 0")
+  .style("font-size", "18px")
+  .style("color", "#1f2937")
+  .text("Você ganhou o jogo.");
+
+const restartButton = overlayCard
+  .append("button")
+  .attr("type", "button")
+  .style("padding", "10px 20px")
+  .style("font-size", "16px")
+  .style("font-weight", "600")
+  .style("border", "none")
+  .style("border-radius", "8px")
+  .style("background", "#2563eb")
+  .style("color", "#ffffff")
+  .style("cursor", "pointer")
+  .text("Reiniciar");
 
 const minimapWidth = 220;
 const minimapHeight = 150;
@@ -257,11 +294,12 @@ function checkWin() {
     }
     bee.interrupt();
     helperText.text("Parabéns! Você venceu.");
-    winMessage
+    overlay
       .transition()
-      .duration(800)
+      .duration(450)
       .ease(d3.easeCubicOut)
-      .style("opacity", 1);
+      .style("opacity", "1")
+      .on("start", () => overlay.style("pointer-events", "all"));
   }
 }
 
@@ -312,5 +350,34 @@ function initialize() {
   syncMinimapFromCamera();
   moveBeeRandomly();
 }
+
+function restartGame() {
+  if (currentBeeTransition) {
+    currentBeeTransition.on("end", null);
+  }
+  bee.interrupt();
+  overlay.interrupt();
+  hasWon = false;
+
+  beePosition.x = worldWidth * (0.2 + Math.random() * 0.2);
+  beePosition.y = worldHeight * (0.2 + Math.random() * 0.2);
+  flowerPosition.x = worldWidth * (0.6 + Math.random() * 0.2);
+  flowerPosition.y = worldHeight * (0.5 + Math.random() * 0.2);
+
+  helperText.text("Arraste a flor até encostar na abelha. Arraste o cenário para pan.");
+  renderBee(0);
+  renderFlower();
+
+  overlay
+    .transition()
+    .duration(250)
+    .ease(d3.easeCubicIn)
+    .style("opacity", "0")
+    .on("end", () => overlay.style("pointer-events", "none"));
+
+  moveBeeRandomly();
+}
+
+restartButton.on("click", restartGame);
 
 initialize();
