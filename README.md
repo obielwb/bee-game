@@ -1,6 +1,6 @@
 # Bee Game (desenhando-com-codigo)
 
-Projeto desenvolvido com **Vite** + **D3.js**.
+Projeto em HTML único com **D3.js** importado via CDN (sem Vite/build).
 
 ## Sobre o jogo
 Neste projeto, o app evoluiu para um **jogo**: o objetivo é **levar a flora (a flor)** até a **abelha**. Quando a **flor encosta na abelha**, o jogo é **finalizado** (condição de vitória).
@@ -17,12 +17,9 @@ Utilizamos recursos do **D3.js** para dar vida à interação:
 
 ## Rodando localmente
 ```bash
-npm install
-npm run dev
+npm start
 ```
 
-## Build e preview
-```bash
-npm run build
-npm run preview
-```
+Depois, abra `http://localhost:5173` no navegador.
+
+Você também pode abrir o `index.html` no **Live Preview** da sua IDE.

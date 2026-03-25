@@ -1,12 +1,405 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>desenhando-com-codigo</title>
+    <title>Bee Game</title>
   </head>
   <body>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module">
+      import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+      const beeSvg = `<svg width="81" height="88" viewBox="0 0 81 88" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="58.8696" y="17" width="29.9509" height="68.1336" rx="14.9755" transform="rotate(43.2719 58.8696 17)" fill="#FFB404" stroke="black" stroke-width="4"/><ellipse cx="59.0807" cy="33.8746" rx="6.59" ry="4" transform="rotate(7.96528 59.0807 33.8746)" fill="black"/><rect x="37.1689" y="40" width="30.9332" height="9" transform="rotate(43.27 37.1689 40)" fill="black"/><rect x="29.1689" y="49" width="30.2669" height="9" transform="rotate(43.27 29.1689 49)" fill="black"/><path d="M55 2.00003C55 2.00003 52 5.50003 52 13C52 20.5 55 24 55 24" stroke="black" stroke-width="4" stroke-linecap="round"/><path d="M71.601 6.10924C71.601 6.10924 67.0068 6.48894 61.7338 11.8223C56.4608 17.1557 56.1334 21.7539 56.1334 21.7539" stroke="black" stroke-width="4" stroke-linecap="round"/><path d="M30.4346 10.4867C35.4843 9.94039 40.9694 14.9067 41.8226 22.8024C42.0016 24.4595 41.5856 26.4007 40.7112 28.4926C39.8446 30.5658 38.5884 32.6435 37.2669 34.5166C35.9504 36.3828 34.6007 38.0015 33.5777 39.1552C33.4016 39.3539 33.2339 39.5368 33.0797 39.706C32.9299 39.5883 32.7689 39.4632 32.6006 39.3277C31.4606 38.4102 29.9358 37.1044 28.3896 35.5498C26.8385 33.9903 25.3004 32.2149 24.1067 30.3603C22.904 28.4918 22.123 26.6546 21.9394 24.9547C21.0864 17.0588 25.3844 11.0332 30.4346 10.4867Z" stroke="black" stroke-width="4"/><path d="M2.29279 40.7649C2.51821 35.6908 8.25856 31.0219 16.1924 31.3754C17.8574 31.4496 19.7132 32.155 21.6484 33.3364C23.5662 34.5073 25.4295 36.064 27.0806 37.6541C28.7257 39.2383 30.1211 40.8177 31.1065 42.0038C31.2761 42.208 31.4315 42.4015 31.5754 42.5795C31.4363 42.7097 31.2883 42.8499 31.1288 42.9958C30.0491 43.9835 28.5273 45.2927 26.7563 46.5854C24.9796 47.8822 22.9916 49.1334 20.9775 50.0322C18.9483 50.9378 17.0139 51.4312 15.3059 51.3551C7.37189 51.0013 2.06746 45.8396 2.29279 40.7649Z" stroke="black" stroke-width="4"/></svg>`;
+      const flowerSvg = `<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg width="576.08459" height="576.08466" viewBox="0 0 152.42238 152.4224" version="1.1" id="svg1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><defs id="defs1" /><g id="layer1" transform="translate(-56.080472,-56.080467)"><g id="g21" style="display:inline" transform="translate(-21.910318,-50.050802)"><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="path14" cx="192.66774" cy="181.97261" rx="36.687103" ry="25.023956" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse15" cx="220.80823" cy="-154.57185" rx="36.687103" ry="25.023956" transform="rotate(90)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse16" cx="-115.73623" cy="-182.71234" rx="36.687103" ry="25.023956" transform="scale(-1)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse17" cx="-143.87671" cy="153.83212" rx="36.687103" ry="25.023956" transform="rotate(-90)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse18" cx="276.43863" cy="19.528469" rx="36.687103" ry="25.023956" transform="rotate(45)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse19" cx="58.364086" cy="-238.34273" rx="36.687103" ry="25.023956" transform="rotate(135)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse20" cx="-199.50711" cy="-20.2682" rx="36.687103" ry="25.023956" transform="rotate(-135)" /><ellipse style="font-variation-settings:'wght' 900;fill:#f9f9f9;stroke:#000000;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="ellipse21" cx="18.567432" cy="237.603" rx="36.687103" ry="25.023956" transform="rotate(-45)" /><circle style="font-variation-settings:'wght' 900;fill:#ffcc00;stroke:#ffcc00;stroke-width:2.11667;stroke-linecap:round;paint-order:fill markers stroke" id="path13" cy="181.97261" cx="154.78767" r="20.461683" /></g></g></svg>`;
+      const beeSrc = `data:image/svg+xml;utf8,${encodeURIComponent(beeSvg)}`;
+      const flowerSrc = `data:image/svg+xml;utf8,${encodeURIComponent(flowerSvg)}`;
+
+      document.body.style.margin = "0";
+      document.body.style.overflow = "hidden";
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const worldWidth = Math.max(viewportWidth * 2.5, 2200);
+      const worldHeight = Math.max(viewportHeight * 2.5, 1600);
+
+      const beeSize = 96;
+      const flowerSize = 140;
+      const beeHitRadius = beeSize * 0.45;
+      const flowerHitRadius = flowerSize * 0.45;
+
+      const camera = { x: 0, y: 0 };
+      const beePosition = { x: worldWidth * 0.3, y: worldHeight * 0.3 };
+      const flowerPosition = { x: worldWidth * 0.6, y: worldHeight * 0.55 };
+
+      let hasWon = false;
+      let isBrushSyncing = false;
+
+      const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", viewportWidth)
+        .attr("height", viewportHeight)
+        .style("position", "fixed")
+        .style("top", 0)
+        .style("left", 0)
+        .style("touch-action", "none")
+        .style("background", "#e9f7ff");
+
+      const root = svg.append("g");
+
+      root
+        .append("rect")
+        .attr("width", worldWidth)
+        .attr("height", worldHeight)
+        .attr("fill", "#f5fff0");
+
+      root
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", worldWidth)
+        .attr("height", worldHeight)
+        .attr("fill", "none")
+        .attr("stroke", "#b8ccb8")
+        .attr("stroke-width", 4);
+
+      const gridLayer = root.append("g").attr("opacity", 0.3);
+      const gridStep = 180;
+
+      for (let x = 0; x <= worldWidth; x += gridStep) {
+        gridLayer
+          .append("line")
+          .attr("x1", x)
+          .attr("y1", 0)
+          .attr("x2", x)
+          .attr("y2", worldHeight)
+          .attr("stroke", "#9cc29c")
+          .attr("stroke-width", 1);
+      }
+
+      for (let y = 0; y <= worldHeight; y += gridStep) {
+        gridLayer
+          .append("line")
+          .attr("x1", 0)
+          .attr("y1", y)
+          .attr("x2", worldWidth)
+          .attr("y2", y)
+          .attr("stroke", "#9cc29c")
+          .attr("stroke-width", 1);
+      }
+
+      const bee = root
+        .append("image")
+        .attr("href", beeSrc)
+        .attr("width", beeSize)
+        .attr("height", beeSize);
+
+      const flower = root
+        .append("g")
+        .attr("cursor", "grab")
+        .call(
+          d3
+            .drag()
+            .container(root.node())
+            .on("start", function (event) {
+              if (hasWon) return;
+              if (event.sourceEvent) {
+                event.sourceEvent.stopPropagation();
+              }
+              d3.select(this).attr("cursor", "grabbing");
+              checkWin();
+            })
+            .on("drag", function (event) {
+              if (hasWon) return;
+              if (event.sourceEvent) {
+                event.sourceEvent.stopPropagation();
+              }
+              flowerPosition.x = clamp(
+                event.x,
+                flowerSize / 2,
+                worldWidth - flowerSize / 2,
+              );
+              flowerPosition.y = clamp(
+                event.y,
+                flowerSize / 2,
+                worldHeight - flowerSize / 2,
+              );
+              renderFlower();
+              checkWin();
+            })
+            .on("end", function () {
+              if (hasWon) return;
+              d3.select(this).attr("cursor", "grab");
+              checkWin();
+            }),
+        );
+
+      flower
+        .append("image")
+        .attr("href", flowerSrc)
+        .attr("x", -flowerSize / 2)
+        .attr("y", -flowerSize / 2)
+        .attr("width", flowerSize)
+        .attr("height", flowerSize);
+
+      const hud = svg.append("g").attr("pointer-events", "none");
+
+      const helperText = hud
+        .append("text")
+        .attr("x", 20)
+        .attr("y", 34)
+        .attr("fill", "#1a4d1a")
+        .attr("font-size", 20)
+        .attr("font-family", "sans-serif")
+        .text("Arraste a flor até encostar na abelha. Arraste o cenário para pan.");
+
+      const overlay = d3
+        .select("body")
+        .append("div")
+        .style("position", "fixed")
+        .style("inset", "0")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("justify-content", "center")
+        .style("background", "rgba(10, 25, 10, 0.55)")
+        .style("z-index", "9999")
+        .style("opacity", "0")
+        .style("pointer-events", "none");
+
+      const overlayCard = overlay
+        .append("div")
+        .style("background", "#ffffff")
+        .style("border-radius", "14px")
+        .style("padding", "28px 34px")
+        .style("box-shadow", "0 20px 45px rgba(0,0,0,0.25)")
+        .style("text-align", "center")
+        .style("font-family", "sans-serif")
+        .style("min-width", "280px");
+
+      overlayCard
+        .append("h2")
+        .style("margin", "0 0 8px 0")
+        .style("font-size", "34px")
+        .style("color", "#15803d")
+        .text("Sucesso!");
+
+      overlayCard
+        .append("p")
+        .style("margin", "0 0 20px 0")
+        .style("font-size", "18px")
+        .style("color", "#1f2937")
+        .text("Você ganhou o jogo.");
+
+      const restartButton = overlayCard
+        .append("button")
+        .attr("type", "button")
+        .style("padding", "10px 20px")
+        .style("font-size", "16px")
+        .style("font-weight", "600")
+        .style("border", "none")
+        .style("border-radius", "8px")
+        .style("background", "#2563eb")
+        .style("color", "#ffffff")
+        .style("cursor", "pointer")
+        .text("Reiniciar");
+
+      const minimapWidth = 220;
+      const minimapHeight = 150;
+      const minimapMargin = 16;
+      const minimapScale = Math.min(
+        minimapWidth / worldWidth,
+        minimapHeight / worldHeight,
+      );
+      const minimapWorldWidth = worldWidth * minimapScale;
+      const minimapWorldHeight = worldHeight * minimapScale;
+
+      const minimap = svg
+        .append("g")
+        .attr(
+          "transform",
+          `translate(${viewportWidth - minimapWorldWidth - minimapMargin}, ${
+            viewportHeight - minimapWorldHeight - minimapMargin
+          })`,
+        );
+
+      minimap
+        .append("rect")
+        .attr("width", minimapWorldWidth)
+        .attr("height", minimapWorldHeight)
+        .attr("fill", "rgba(255,255,255,0.75)")
+        .attr("stroke", "#4f5f4f")
+        .attr("stroke-width", 1.5);
+
+      const minimapViewport = minimap
+        .append("rect")
+        .attr("fill", "rgba(120, 170, 255, 0.30)")
+        .attr("stroke", "#4f7ee6")
+        .attr("stroke-width", 1.3);
+
+      const minimapBrushLayer = minimap.append("g");
+
+      const brush = d3
+        .brush()
+        .extent([
+          [0, 0],
+          [minimapWorldWidth, minimapWorldHeight],
+        ])
+        .on("brush end", brushed);
+
+      minimapBrushLayer.call(brush);
+
+      const zoom = d3
+        .zoom()
+        .scaleExtent([1, 1])
+        .translateExtent([
+          [0, 0],
+          [worldWidth, worldHeight],
+        ])
+        .on("zoom", ({ transform }) => {
+          camera.x = clamp(-transform.x, 0, worldWidth - viewportWidth);
+          camera.y = clamp(-transform.y, 0, worldHeight - viewportHeight);
+          applyCamera();
+          syncMinimapFromCamera();
+        });
+
+      svg.call(zoom);
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function applyCamera() {
+        root.attr("transform", `translate(${-camera.x}, ${-camera.y})`);
+      }
+
+      function renderBee(angleDeg) {
+        bee.attr(
+          "transform",
+          `translate(${beePosition.x - beeSize / 2}, ${beePosition.y - beeSize / 2}) rotate(${angleDeg}, ${beeSize / 2}, ${beeSize / 2})`,
+        );
+      }
+
+      function renderFlower() {
+        flower.attr("transform", `translate(${flowerPosition.x}, ${flowerPosition.y})`);
+      }
+
+      function syncMinimapFromCamera() {
+        const selection = [
+          [camera.x * minimapScale, camera.y * minimapScale],
+          [
+            (camera.x + viewportWidth) * minimapScale,
+            (camera.y + viewportHeight) * minimapScale,
+          ],
+        ];
+        minimapViewport
+          .attr("x", selection[0][0])
+          .attr("y", selection[0][1])
+          .attr("width", selection[1][0] - selection[0][0])
+          .attr("height", selection[1][1] - selection[0][1]);
+
+        isBrushSyncing = true;
+        minimapBrushLayer.call(brush.move, selection);
+        isBrushSyncing = false;
+      }
+
+      function brushed(event) {
+        if (isBrushSyncing || !event.selection || hasWon) return;
+        const [[x0, y0]] = event.selection;
+        const nextX = clamp(x0 / minimapScale, 0, worldWidth - viewportWidth);
+        const nextY = clamp(y0 / minimapScale, 0, worldHeight - viewportHeight);
+        const transform = d3.zoomIdentity.translate(-nextX, -nextY);
+        svg.call(zoom.transform, transform);
+      }
+
+      function checkWin() {
+        if (hasWon) return;
+        const dx = beePosition.x - flowerPosition.x;
+        const dy = beePosition.y - flowerPosition.y;
+        const distance = Math.hypot(dx, dy);
+        if (distance <= beeHitRadius + flowerHitRadius) {
+          hasWon = true;
+          bee.interrupt();
+          helperText.text("Parabéns! Você venceu.");
+          overlay
+            .transition()
+            .duration(450)
+            .ease(d3.easeCubicOut)
+            .style("opacity", "1")
+            .on("start", () => overlay.style("pointer-events", "all"));
+        }
+      }
+
+      function moveBeeRandomly() {
+        if (hasWon) return;
+
+        const margin = beeSize;
+        const targetX = margin + Math.random() * (worldWidth - margin * 2);
+        const targetY = margin + Math.random() * (worldHeight - margin * 2);
+
+        const dx = targetX - beePosition.x;
+        const dy = targetY - beePosition.y;
+        const distance = Math.hypot(dx, dy);
+        const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+
+        const duration = clamp(distance * 3, 900, 2800);
+        const startX = beePosition.x;
+        const startY = beePosition.y;
+
+        bee
+          .transition()
+          .duration(duration)
+          .ease(d3.easeLinear)
+          .tween("move-bee", () => {
+            return (t) => {
+              beePosition.x = startX + (targetX - startX) * t;
+              beePosition.y = startY + (targetY - startY) * t;
+              renderBee(angleDeg);
+              checkWin();
+            };
+          })
+          .on("end", moveBeeRandomly);
+      }
+
+      function initialize() {
+        const startX = clamp((worldWidth - viewportWidth) / 2, 0, worldWidth - viewportWidth);
+        const startY = clamp((worldHeight - viewportHeight) / 2, 0, worldHeight - viewportHeight);
+
+        renderBee(0);
+        renderFlower();
+        applyCamera();
+
+        svg.call(zoom.transform, d3.zoomIdentity.translate(-startX, -startY));
+        syncMinimapFromCamera();
+        moveBeeRandomly();
+      }
+
+      function restartGame() {
+        bee.interrupt();
+        overlay.interrupt();
+        hasWon = false;
+
+        beePosition.x = worldWidth * (0.2 + Math.random() * 0.2);
+        beePosition.y = worldHeight * (0.2 + Math.random() * 0.2);
+        flowerPosition.x = worldWidth * (0.6 + Math.random() * 0.2);
+        flowerPosition.y = worldHeight * (0.5 + Math.random() * 0.2);
+
+        helperText.text("Arraste a flor até encostar na abelha. Arraste o cenário para pan.");
+        renderBee(0);
+        renderFlower();
+
+        overlay
+          .transition()
+          .duration(250)
+          .ease(d3.easeCubicIn)
+          .style("opacity", "0")
+          .on("end", () => overlay.style("pointer-events", "none"));
+
+        moveBeeRandomly();
+      }
+
+      restartButton.on("click", restartGame);
+      initialize();
+    </script>
   </body>
 </html>
