@@ -11,8 +11,8 @@ const worldHeight = Math.max(viewportHeight * 2.5, 1600);
 
 const beeSize = 96;
 const flowerSize = 140;
-const beeHitRadius = beeSize * 0.36;
-const flowerHitRadius = flowerSize * 0.36;
+const beeHitRadius = beeSize * 0.45;
+const flowerHitRadius = flowerSize * 0.45;
 
 const camera = { x: 0, y: 0 };
 const beePosition = { x: worldWidth * 0.3, y: worldHeight * 0.3 };
@@ -88,12 +88,20 @@ const flower = root
   .call(
     d3
       .drag()
-      .on("start", function () {
+      .container(root.node())
+      .on("start", function (event) {
         if (hasWon) return;
+        if (event.sourceEvent) {
+          event.sourceEvent.stopPropagation();
+        }
         d3.select(this).attr("cursor", "grabbing");
+        checkWin();
       })
       .on("drag", function (event) {
         if (hasWon) return;
+        if (event.sourceEvent) {
+          event.sourceEvent.stopPropagation();
+        }
         flowerPosition.x = clamp(event.x, flowerSize / 2, worldWidth - flowerSize / 2);
         flowerPosition.y = clamp(
           event.y,
@@ -106,6 +114,7 @@ const flower = root
       .on("end", function () {
         if (hasWon) return;
         d3.select(this).attr("cursor", "grab");
+        checkWin();
       }),
   );
 
@@ -137,6 +146,7 @@ const overlay = d3
   .style("align-items", "center")
   .style("justify-content", "center")
   .style("background", "rgba(10, 25, 10, 0.55)")
+  .style("z-index", "9999")
   .style("opacity", "0")
   .style("pointer-events", "none");
 
@@ -289,10 +299,8 @@ function checkWin() {
   const distance = Math.hypot(dx, dy);
   if (distance <= beeHitRadius + flowerHitRadius) {
     hasWon = true;
-    if (currentBeeTransition) {
-      currentBeeTransition.on("end", null);
-    }
     bee.interrupt();
+    currentBeeTransition = null;
     helperText.text("Parabéns! Você venceu.");
     overlay
       .transition()
@@ -352,10 +360,8 @@ function initialize() {
 }
 
 function restartGame() {
-  if (currentBeeTransition) {
-    currentBeeTransition.on("end", null);
-  }
   bee.interrupt();
+  currentBeeTransition = null;
   overlay.interrupt();
   hasWon = false;
 
